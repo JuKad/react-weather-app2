@@ -1,27 +1,63 @@
-import React from "react";
+import React, { useState }  from "react";
 import axios from "axios";
-import WeatherIcon from 'react-icons-weather';
 import Loader from "react-loader-spinner";
 
+export default function WeatherSearch() {
+  const [city, setCity] = useState("");
+  const [message, setMessage] = useState(false);
+  const [weather, setWeather] = useState({});
 
-export default function Weather(props){
+  function showTemperature(response) {
+    setMessage(true);
+    setWeather({
+      temperature: response.data.main.temp,
+      wind: response.data.wind.speed,
+      humidity: response.data.main.humidity,
+      icon: `https://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`,
+      description: response.data.weather[0].description
+    });
+  }
 
-    function showTemperature(response){
-    alert (`The weather in ${response.data.name} is ${response.data.main.temp}°C.`)
-    }
-
+  function handleSubmit(event) {
+    event.preventDefault();
     let apiKey = "63c0356d5ea58f413b8af4b34fb11290";
-    let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${props.city}&appid=${apiKey}&units=metric`;
+    let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
     axios.get(apiUrl).then(showTemperature);
-    
+  }
 
+  function changeCity(event) {
+    setCity(event.target.value);
+  }
 
-   
+  let form = (
+    <form onSubmit={handleSubmit}>
+      <input type="search" placeholder="Enter a city.." onChange={changeCity} />
+      <button type="Submit">Search</button>
+    </form>
+  );
+
+  if (message) {
     return (
-        <div>
-        <Loader type="Rings" color="#00BFFF" height={100} width={100} />
-        <WeatherIcon name="owm" iconId={500} flip="horizontal" rotate="90" />
-        </div>
+      <div>
+        {form}
+        <ul>
+          <li>Temperature: {Math.round(weather.temperature)}°C</li>
+          <li>Description: {weather.description}</li>
+          <li>Humidity: {weather.humidity}%</li>
+          <li>Wind: {weather.wind}km/h</li>
+          <li>
+            <img src={weather.icon} alt={weather.description} />
+          </li>
+        </ul>
+      </div>
     );
-
+  } else {
+    return form;
+    <Loader type="Rings" color="#00BFFF" height={100} width={100} />
+  }
 }
+
+
+
+
+
