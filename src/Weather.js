@@ -20,7 +20,7 @@ export default function Weather(props){
     return (
         <div>
         <Loader type="Rings" color="#00BFFF" height={100} width={100} />
-        <WeatherIcon name="owm" iconId="200" flip="horizontal" rotate="90" />
+        <WeatherIcon name="owm" iconId={500} flip="horizontal" rotate="90" />
         </div>
     );
 
